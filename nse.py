@@ -2,6 +2,11 @@ import requests
 import pandas as pd
 from datetime import datetime
 from io import BytesIO
+# import os
+
+# os.environ['http_proxy'] = "http://886181:Welcome%4012@10.205.48.53:8080"
+# os.environ['https_proxy'] = "http://886181:Welcome%4012@10.205.48.53:8080"
+
 class NSE():
     def __init__(self, timeout=10):
         self.base_url = 'https://www.nseindia.com'
@@ -52,8 +57,36 @@ class NSE():
             except Exception as e:
                 print(f"An error occurred: {str(e)}")
                 return None
-
+    def getCorpInfo(self):
+        try:
+            url = "/api/corp-info?symbol=ONGC&corpType=financialResult&market=equities"
+            r = self.session.get(self.base_url + url, timeout=self.timeout)
+            if r.status_code == 200:
+                data = r.json()  # Parse the response as JSON
+                corp_info = data # Extract the 'tradeInfo' section
+                return corp_info
+            else:
+                print(f"Failed to fetch data. Status Code: {r.status_code}")
+                return None
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return None
     
+    
+    def getCorporateActions(self):
+        try:
+            url = "/api/corporates-corporateActions?index=equities&symbol=ONGC"
+            r = self.session.get(self.base_url + url, timeout=self.timeout)
+            if r.status_code == 200:
+                data = r.json()  # Parse the response as JSON
+                corp_actions = data # Extract the 'corp_actions' section
+                return corp_actions
+            else:
+                print(f"Failed to fetch data. Status Code: {r.status_code}")
+                return None
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+            return None
 
 
 if __name__ == '__main__':
@@ -64,6 +97,11 @@ if __name__ == '__main__':
     # print("*************************")
     # df = nse.getmarketCap()
     # print(df)
-    df= nse.getNifty50HistoricalData(date(2024,12,1), date(2024,12,5))
+    # df= nse.getNifty50HistoricalData(date(2024,12,1), date(2024,12,5))
+    # print(df)
+    
+    # df= nse.getCorpInfo()
+    # print(df)
+    df= nse.getCorporateActions()
     print(df)
 #    #https://www.nseindia.com
